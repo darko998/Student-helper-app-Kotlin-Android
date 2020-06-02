@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="rs.raf.projekat2.darko_dimitrijevic_rn9418">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".application.Application"
         android:allowBackup="true"
@@ -10,11 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-
         <activity android:name=".presentation.view.activities.MainActivity" />
         <activity android:name=".presentation.view.activities.LoginActivity" />
 
-        <activity android:name=".presentation.view.activities.SplashActivity">
+        <activity android:name=".presentation.view.activities.SplashActivity" android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

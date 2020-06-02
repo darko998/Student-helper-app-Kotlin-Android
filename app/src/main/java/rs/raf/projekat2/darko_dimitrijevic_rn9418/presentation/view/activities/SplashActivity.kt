@@ -1,11 +1,16 @@
 package rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.activities
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.contracts.LoggedUserContract
+import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.viewmodels.LoggedUserViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class SplashActivity : AppCompatActivity() {
+
+    private val loggedUserViewModel : LoggedUserContract.LoggedUserViewModel by viewModel<LoggedUserViewModel>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,12 +25,12 @@ class SplashActivity : AppCompatActivity() {
             intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
+
+        finish()
     }
 
-    fun userIsLoggedIn() : Boolean {
-        val sharedPreferences = getSharedPreferences(packageName, Context.MODE_PRIVATE);
-        val user = sharedPreferences.getString(LoginActivity.USERNAME, "-1")
+    private fun userIsLoggedIn() : Boolean {
 
-        return user != "-1"
+        return loggedUserViewModel.getUser() != null
     }
 }
