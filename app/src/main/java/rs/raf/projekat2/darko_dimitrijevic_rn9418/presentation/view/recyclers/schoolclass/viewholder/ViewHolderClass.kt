@@ -1,4 +1,4 @@
-package rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.recyclers.viewholder
+package rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.recyclers.schoolclass.viewholder
 
 import android.view.View
 import android.widget.TextView
@@ -13,17 +13,21 @@ class ViewHolderClass (private val containerView: View) : RecyclerView.ViewHolde
     lateinit var professor: TextView
     lateinit var classroom: TextView
     lateinit var groups: TextView
+    lateinit var day: TextView
+    lateinit var time: TextView
 
     init {
         initView()
     }
 
     fun initView() {
-        schoolClassName = containerView.findViewById(R.id.tv_school_class)
+        schoolClassName = containerView.findViewById(R.id.tv_note_title)
         schoolClassType = containerView.findViewById(R.id.tv_school_class_type)
         professor = containerView.findViewById(R.id.tv_professor)
         classroom = containerView.findViewById(R.id.tv_classroom)
         groups = containerView.findViewById(R.id.tv_groups)
+        day = containerView.findViewById(R.id.tv_day)
+        time = containerView.findViewById(R.id.tv_time)
     }
 
     fun bind(schoolClass: SchoolClass) {
@@ -32,6 +36,8 @@ class ViewHolderClass (private val containerView: View) : RecyclerView.ViewHolde
         professor.text = schoolClass.professor
         classroom.text = schoolClass.classroom
         groups.text = schoolClass.groups
+        day.text = schoolClass.day
+        time.text = schoolClass.term
     }
 
 }

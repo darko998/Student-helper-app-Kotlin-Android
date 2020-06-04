@@ -10,4 +10,12 @@
     <string name="professor">Professor:</string>
     <string name="classroom">Classroom:</string>
     <string name="groups">Groups:</string>
+    <string name="type">Type:</string>
+    <string name="find">Find</string>
+    <string name="title_professor">Title/Professor</string>
+    <string name="search_by_title_or_content">Search by title or content</string>
+    <string name="title">Title</string>
+    <string name="close">Close</string>
+    <string name="create">Create</string>
+    <string name="content">Content</string>
 </resources>

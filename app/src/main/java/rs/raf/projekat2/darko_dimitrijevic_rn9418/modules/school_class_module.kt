@@ -1,9 +1,8 @@
 package rs.raf.projekat2.darko_dimitrijevic_rn9418.modules
 
-import org.koin.androidx.experimental.dsl.viewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
-import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.datasources.local.database.SchoolClassDatabase
+import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.datasources.local.database.schoolclass.SchoolClassDatabase
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.datasources.remote.SchoolClassService
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.repositories.schoolclass.SchoolClassRepository
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.repositories.schoolclass.SchoolClassRepositoryImpl

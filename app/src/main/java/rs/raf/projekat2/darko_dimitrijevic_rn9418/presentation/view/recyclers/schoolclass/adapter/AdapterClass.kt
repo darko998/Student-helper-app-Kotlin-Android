@@ -1,12 +1,12 @@
-package rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.recyclers.adapter
+package rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.recyclers.schoolclass.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.R
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.schoolclass.SchoolClass
-import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.recyclers.diff.DiffItemCallbackClass
-import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.recyclers.viewholder.ViewHolderClass
+import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.recyclers.schoolclass.diff.DiffItemCallbackClass
+import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.recyclers.schoolclass.viewholder.ViewHolderClass
 
 
 class AdapterClass (diffItemCallback: DiffItemCallbackClass) : ListAdapter<SchoolClass, ViewHolderClass>(diffItemCallback) {

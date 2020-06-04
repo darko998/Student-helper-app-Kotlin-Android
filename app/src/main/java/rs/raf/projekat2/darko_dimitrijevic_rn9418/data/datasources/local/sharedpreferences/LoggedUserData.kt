@@ -1,7 +1,7 @@
 package rs.raf.projekat2.darko_dimitrijevic_rn9418.data.datasources.local.sharedpreferences
 
 import android.content.SharedPreferences
-import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.User
+import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.user.User
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.activities.LoginActivity
 
 class LoggedUserData (private val sharedPreferences: SharedPreferences) {
@@ -29,7 +29,10 @@ class LoggedUserData (private val sharedPreferences: SharedPreferences) {
         val password = sharedPreferences.getString(LoginActivity.PIN, "-1") ?: ""
 
         if (username != "-1" && password != "-1")
-            return User(username, password)
+            return User(
+                username,
+                password
+            )
 
         return null
     }

@@ -1,4 +1,4 @@
-package rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.state
+package rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.states.schoolclass
 
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.schoolclass.SchoolClass
 
