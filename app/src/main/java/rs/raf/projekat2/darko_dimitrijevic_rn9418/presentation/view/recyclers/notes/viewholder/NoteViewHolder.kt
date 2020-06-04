@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.note_list_item.view.*
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.R
@@ -16,6 +17,7 @@ class NoteViewHolder (private val containerView: View, val clicked : (Int, Int) 
     lateinit var btnDelete: ImageView
     lateinit var btnEdit: ImageView
     lateinit var btnArchive: ImageView
+    lateinit var btnUnArchive: ImageView
 
     init {
         initView()
@@ -28,6 +30,8 @@ class NoteViewHolder (private val containerView: View, val clicked : (Int, Int) 
         btnDelete = containerView.findViewById(R.id.icon_delete_note)
         btnEdit = containerView.findViewById(R.id.icon_edit_note)
         btnArchive = containerView.findViewById(R.id.icon_archive_note)
+        btnUnArchive = containerView.findViewById(R.id.icon_unarchive_note)
+
     }
 
     fun initListeners() {
@@ -49,10 +53,22 @@ class NoteViewHolder (private val containerView: View, val clicked : (Int, Int) 
         btnArchive.setOnClickListener {
             clicked.invoke(adapterPosition, 2)
         }
+
+        btnUnArchive.setOnClickListener {
+            clicked.invoke(adapterPosition, 2)
+        }
     }
 
     fun bind(note: Note) {
         title.text = note.title
         content.text = note.content
+
+        if(note.archived) {
+            btnArchive.isVisible = false
+            btnUnArchive.isVisible = true
+        } else {
+            btnArchive.isVisible = true
+            btnUnArchive.isVisible = false
+        }
     }
 }

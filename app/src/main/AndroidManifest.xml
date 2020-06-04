@@ -7,7 +7,7 @@
         android:name=".application.Application"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="Projekat 2"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -15,6 +15,7 @@
         <activity android:name=".presentation.view.activities.MainActivity" />
         <activity android:name=".presentation.view.activities.LoginActivity" />
         <activity android:name=".presentation.view.activities.CreateNoteActivity" />
+        <activity android:name=".presentation.view.activities.EditNoteActivity" />
 
         <activity android:name=".presentation.view.activities.SplashActivity" android:theme="@style/SplashTheme">
             <intent-filter>

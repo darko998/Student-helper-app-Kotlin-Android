@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.Resource
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.repositories.schoolclass.SchoolClassRepository
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.contracts.SchoolClassContract
+import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.filter.FilterSchoolClass
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.states.schoolclass.SchoolClassState
 import timber.log.Timber
 
@@ -16,6 +18,40 @@ class SchoolClassViewModel(private val schoolClassRepository: SchoolClassReposit
     override val schoolClassesState: MutableLiveData<SchoolClassState> = MutableLiveData()
 
     private val subscriptions = CompositeDisposable()
+
+    private val publishSubject : PublishSubject<FilterSchoolClass> = PublishSubject.create()
+
+    init {
+        val subscription = publishSubject
+            .switchMap {
+                schoolClassRepository
+                    .getFiltered(it.name, it.professor, it.group, it.day)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnError {
+                        Timber.e("Error in school class publish subject.")
+                        Timber.e(it)
+                    }
+            }
+            .subscribe(
+                {
+                    when(it) {
+                        is Resource.Success -> {
+                            schoolClassesState.value = SchoolClassState.Success(it.data)
+                        }
+                        is Resource.Error -> {
+                            schoolClassesState.value = SchoolClassState.Error("Error occurred while filtering data.")
+                        }
+                    }
+                },
+                {
+                    schoolClassesState.value = SchoolClassState.Error("Error occurred while filtering data.")
+                    Timber.e(it)
+                }
+            )
+
+        subscriptions.add(subscription)
+    }
 
     override fun fetchAll() {
         val subscription = schoolClassRepository
@@ -84,23 +120,25 @@ class SchoolClassViewModel(private val schoolClassRepository: SchoolClassReposit
     }
 
     override fun getFiltered(name: String, professor: String, group: String, day: String) {
-        val subscription = schoolClassRepository
-            .getFiltered(name, professor, group, day)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
-                    when(it) {
-                        is Resource.Success -> schoolClassesState.value = SchoolClassState.Success(it.data)
-                        is Resource.Error -> schoolClassesState.value = SchoolClassState.Error("Error occurred while fetching filtered data.")
-                        is Resource.Loading -> schoolClassesState.value = SchoolClassState.Loading
-                    }
-                },
-                {
-                    schoolClassesState.value = SchoolClassState.Error("Error occurred while fetching filtered data.")
-                    Timber.e(it)
-                }
-            )
+//        val subscription = schoolClassRepository
+//            .getFiltered(name, professor, group, day)
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe(
+//                {
+//                    when(it) {
+//                        is Resource.Success -> schoolClassesState.value = SchoolClassState.Success(it.data)
+//                        is Resource.Error -> schoolClassesState.value = SchoolClassState.Error("Error occurred while fetching filtered data.")
+//                        is Resource.Loading -> schoolClassesState.value = SchoolClassState.Loading
+//                    }
+//                },
+//                {
+//                    schoolClassesState.value = SchoolClassState.Error("Error occurred while fetching filtered data.")
+//                    Timber.e(it)
+//                }
+//            )
+
+        publishSubject.onNext(FilterSchoolClass(name, professor, group, day))
     }
 
 

@@ -126,7 +126,7 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         val groupsList = listOf("Group", "101", "102", "103", "104", "105", "106", "107", "108", "201", "202", "203", "204", "205", "206", "207", "208",
             "301", "302", "303", "304", "305", "306", "307", "308", "401", "402", "403", "404", "405", "406", "407", "408")
 
-        val daysList = listOf("Day", "PON", "UTO", "SRE", "CET", "PET", "SUB", "NED")
+        val daysList = listOf("Day", "PON", "UTO", "SRE", "ČET", "PET", "SUB", "NED")
 
         val adapterGroup = context?.let { ArrayAdapter(it, android.R.layout.simple_spinner_item, groupsList) }
         val adapterDay = context?.let { ArrayAdapter(it, android.R.layout.simple_spinner_item, daysList) }

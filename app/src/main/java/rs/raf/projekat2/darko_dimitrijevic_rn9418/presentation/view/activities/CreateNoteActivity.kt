@@ -34,6 +34,9 @@ class CreateNoteActivity : AppCompatActivity(R.layout.activity_create_note) {
             val content = et_note_content.text.toString()
 
             noteViewModel.insert(Note(0, title, content, false))
+
+            et_note_title.setText("")
+            et_note_content.setText("")
         }
 
         btn_create_note_close.setOnClickListener {

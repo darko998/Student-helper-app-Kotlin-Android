@@ -6,23 +6,57 @@ import androidx.lifecycle.ViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.Resource
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.note.Note
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.repositories.note.NoteRepository
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.contracts.NoteContract
+import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.filter.FilterNote
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.states.note.*
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 class NoteViewModel (val noteRepository: NoteRepository) : ViewModel(), NoteContract.ViewModel {
 
     override val addDone: MutableLiveData<AddNoteState> = MutableLiveData()
-    override val deleteDone: MutableLiveData<DeleteNoteState> = MutableLiveData()
-    override val editDone: MutableLiveData<EditNoteState> = MutableLiveData()
-    override val archiveDone: MutableLiveData<ArchiveNoteState> = MutableLiveData()
-
     override val notesState: MutableLiveData<NotesState> = MutableLiveData()
 
-    val subscriptions = CompositeDisposable()
+    private val subscriptions = CompositeDisposable()
+
+    private val publishSubject: PublishSubject<FilterNote> = PublishSubject.create()
+
+    init {
+        val subscription = publishSubject
+            .debounce(200, TimeUnit.MILLISECONDS)
+            .distinctUntilChanged()
+            .switchMap {
+                noteRepository
+                    .getByTitleOrContent(it.title, it.content, it.archived)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnError {
+                        Timber.e("Error in publish subject")
+                        Timber.e(it)
+                    }
+            }
+            .subscribe(
+                {
+                    when(it) {
+                        is Resource.Success -> {
+                            Timber.e("------- " + it.data)
+
+                            notesState.value = NotesState.Success(it.data)
+                        }
+                        is Resource.Error -> notesState.value = NotesState.Error("Error occurred while filtering notes.")
+                    }
+                },
+                {
+                    notesState.value = NotesState.Error("Error occurred while filtering notes.")
+                    Timber.e(it)
+                }
+            )
+        subscriptions.add(subscription)
+    }
 
     override fun insert(note: Note) {
         val subscription = noteRepository
@@ -48,7 +82,10 @@ class NoteViewModel (val noteRepository: NoteRepository) : ViewModel(), NoteCont
             .subscribe(
                 {
                     when(it) {
-                        is Resource.Success -> notesState.value = NotesState.Success(it.data)
+                        is Resource.Success -> {
+                            Timber.e("------- " + it.data)
+                            notesState.value = NotesState.Success(it.data)
+                        }
                         is Resource.Loading -> notesState.value = NotesState.Loading
                         is Resource.Error -> notesState.value = NotesState.Error("Error occurred while fetching notes from db.")
                     }
@@ -62,24 +99,7 @@ class NoteViewModel (val noteRepository: NoteRepository) : ViewModel(), NoteCont
     }
 
     override fun getByTitleOrContent(title: String, content: String, archived: Boolean) {
-        val subscription = noteRepository
-            .getByTitleOrContent(title, content, archived)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
-                    when(it) {
-                        is Resource.Success -> notesState.value = NotesState.SuccessFilteredData(it.data)
-                        is Resource.Error -> notesState.value = NotesState.Error("Error occurred while fetching filtered data.")
-                        is Resource.Loading -> notesState.value = NotesState.Loading
-                    }
-                },
-                {
-                    notesState.value = NotesState.Error("Error occurred while fetching filtered data.")
-                    Timber.e(it)
-                }
-            )
-        subscriptions.add(subscription)
+        publishSubject.onNext(FilterNote(title, content, archived))
     }
 
     override fun delete(note: Note) {
@@ -89,10 +109,10 @@ class NoteViewModel (val noteRepository: NoteRepository) : ViewModel(), NoteCont
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {
-                    deleteDone.value = DeleteNoteState.Success
+                    notesState.value = NotesState.DeleteSuccess
                 },
                 {
-                    deleteDone.value = DeleteNoteState.Error("Error occurred while deleting note.")
+                    notesState.value = NotesState.DeleteError
                 }
             )
         subscriptions.add(subscription)
@@ -105,10 +125,36 @@ class NoteViewModel (val noteRepository: NoteRepository) : ViewModel(), NoteCont
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {
-                    archiveDone.value = ArchiveNoteState.Success
+                    if(note.archived)
+                        /** If forwarded note is archived, we need to unarchive. If operation is
+                         * successful we need to notify user about success operation. There are two
+                         * types of states, archive and unarchive.
+                         * */
+                        notesState.value = NotesState.UnArchiveSuccess
+                    else
+                        notesState.value = NotesState.ArchiveSuccess
                 },
                 {
-                    archiveDone.value = ArchiveNoteState.Error("Error occurred while archiving note.")
+                    if(note.archived)
+                        notesState.value = NotesState.UnArchiveError
+                    else
+                        notesState.value = NotesState.ArchiveError
+                }
+            )
+        subscriptions.add(subscription)
+    }
+
+    override fun update(note: Note) {
+        val subscription = noteRepository
+            .update(note)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+                    notesState.value = NotesState.UpdateSuccess
+                },
+                {
+                    notesState.value = NotesState.UpdateError
                 }
             )
         subscriptions.add(subscription)

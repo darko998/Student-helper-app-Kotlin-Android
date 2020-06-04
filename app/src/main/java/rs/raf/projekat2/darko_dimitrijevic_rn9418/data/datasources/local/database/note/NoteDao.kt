@@ -1,8 +1,6 @@
 package rs.raf.projekat2.darko_dimitrijevic_rn9418.data.datasources.local.database.note
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import io.reactivex.Completable
 import io.reactivex.Observable
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.Resource
@@ -24,7 +22,9 @@ abstract class NoteDao {
     @Query("DELETE FROM notes WHERE id = :id")
     abstract fun delete(id: Long) : Completable
 
-    @Query("UPDATE notes SET archived = :archived WHERE id = :id")
-    abstract fun changeArchiveState(id: Long, archived: Boolean) : Completable
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun update(note: NoteEntity) : Completable
+
+
 
 }

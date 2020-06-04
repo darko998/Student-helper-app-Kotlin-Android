@@ -1,6 +1,7 @@
 package rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.recyclers.notes.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.R

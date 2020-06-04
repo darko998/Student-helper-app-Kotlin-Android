@@ -12,4 +12,5 @@ interface NoteRepository {
     fun getByTitleOrContent(title: String, content: String, archived: Boolean) : Observable<Resource<List<Note>>>
     fun delete(note: Note) : Completable
     fun changeArchiveState(note: Note) : Completable
+    fun update(note: Note): Completable
 }

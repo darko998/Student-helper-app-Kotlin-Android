@@ -6,6 +6,7 @@ import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.datasources.local.databas
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.Resource
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.note.Note
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.note.NoteEntity
+import timber.log.Timber
 
 class NoteRepositoryImpl (val dataSource: NoteDao) : NoteRepository {
 
@@ -41,7 +42,12 @@ class NoteRepositoryImpl (val dataSource: NoteDao) : NoteRepository {
          * archive it. Because that we always get opposite state of note. */
         val oppositeStateArchive = !note.archived
 
-        return dataSource.changeArchiveState(note.id, oppositeStateArchive)
+        return dataSource.update(NoteEntity(note.id, note.title, note.content, oppositeStateArchive))
+    }
+
+    override fun update(note: Note): Completable {
+        Timber.e("99999999999999   " + note.toString())
+        return dataSource.update(NoteEntity(note.id, note.title, note.content, note.archived))
     }
 
 

@@ -5,26 +5,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Switch
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.android.synthetic.main.fragment_notes.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.R
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.note.Note
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.contracts.NoteContract
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.activities.CreateNoteActivity
+import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.activities.EditNoteActivity
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.recyclers.notes.adapter.NoteAdapter
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.recyclers.notes.diff.NoteDiffItemCallback
-import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.states.note.ArchiveNoteState
-import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.states.note.DeleteNoteState
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.states.note.NotesState
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.viewmodels.NoteViewModel
 import timber.log.Timber
@@ -69,15 +68,23 @@ class NotesFragment : Fragment(R.layout.fragment_notes) {
 
 
             if(flag == 0) {
-                /** If flag is 0 that means icon delete is clicked. */
+                /** If flag is 0 that means icon DELETE is clicked. */
 
                 noteViewModel.delete(note)
             } else if (flag == 1) {
-                /** If flag is 1 that means icon edit is clicked. */
+                /** If flag is 1 that means icon EDIT is clicked. */
+
+                val intent = Intent(this.context, EditNoteActivity::class.java)
+                intent.putExtra(EditNoteActivity.NOTE_ID, note.id)
+                intent.putExtra(EditNoteActivity.NOTE_TITLE, note.title)
+                intent.putExtra(EditNoteActivity.NOTE_CONTENT, note.content)
+                intent.putExtra(EditNoteActivity.NOTE_ARCHIVED, note.archived)
+                startActivity(intent)
 
             } else if (flag == 2) {
-                /** If flag is 2 that means icon archive is clicked. */
+                /** If flag is 2 that means icon ARCHIVE is clicked. */
                 Timber.e(note.archived.toString())
+
                 noteViewModel.changeArchiveState(note)
             }
 
@@ -100,15 +107,9 @@ class NotesFragment : Fragment(R.layout.fragment_notes) {
             noteViewModel.getByTitleOrContent(filter, filter, archived)
         }
 
-//        switchBtn.setOnClickListener {
-//            val archived = switchBtn.isChecked
-//            val filter = searchBox.text.toString()
-//
-//            noteViewModel.getByTitleOrContent(filter, filter, archived)
-//        }
 
         switchBtn.setOnCheckedChangeListener { buttonView, isChecked ->
-            val filter = searchBox.text.toString()
+            var filter = searchBox.text.toString()
 
             if(isChecked) {
                 noteViewModel.getByTitleOrContent(filter, filter, true)
@@ -122,36 +123,26 @@ class NotesFragment : Fragment(R.layout.fragment_notes) {
 
         /** Here we listen on notes changes. */
         noteViewModel.notesState.observe(viewLifecycleOwner, Observer {
+            Timber.e("darkoooooooooooooooooooooooooo " + it)
             renderState(it)
         })
-
-        /** Here we listen on operation deleting note. */
-        noteViewModel.deleteDone.observe(viewLifecycleOwner, Observer {
-            renderDeleteState(it)
-        })
-
-        /** Here we listen on operation archiving note. */
-        noteViewModel.archiveDone.observe(viewLifecycleOwner, Observer {
-            renderArchiveState(it)
-        })
-
 
         val archived = switchBtn.isChecked
         Timber.e(archived.toString())
 
         /** Here we initiate fetching data from db. */
-        noteViewModel.getAll(archived);
+        noteViewModel.getByTitleOrContent("", "", archived)
     }
 
-    fun renderState(state: NotesState) {
+    private fun renderState(state: NotesState) {
         when(state) {
             is NotesState.Success -> {
                 noteAdapter.submitList(state.notes)
 
                 if(state.notes.isEmpty())
                     Toast.makeText(context, "There is no notes in db.", Toast.LENGTH_SHORT).show()
-                else
-                    Toast.makeText(context, "Successfully fetched notes.", Toast.LENGTH_SHORT).show()
+//                else
+//                    Toast.makeText(context, "Successfully fetched notes.", Toast.LENGTH_SHORT).show()
 
             }
             is NotesState.SuccessFilteredData -> {
@@ -159,7 +150,6 @@ class NotesFragment : Fragment(R.layout.fragment_notes) {
 
                 if(state.notes.isEmpty())
                     Toast.makeText(context, "There is no notes for that filter.", Toast.LENGTH_SHORT).show()
-
             }
             is NotesState.Loading -> {
                 Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT).show()
@@ -167,29 +157,31 @@ class NotesFragment : Fragment(R.layout.fragment_notes) {
             is NotesState.Error -> {
                 Toast.makeText(context, "Error occured: " + state.error, Toast.LENGTH_SHORT).show()
             }
+            is NotesState.UpdateSuccess -> {
+                Toast.makeText(context, "Success update.", Toast.LENGTH_SHORT).show()
+            }
+            is NotesState.UpdateError -> {
+                Toast.makeText(context, "Error occurred while updating.", Toast.LENGTH_SHORT).show()
+            }
+            is NotesState.DeleteSuccess -> {
+                Toast.makeText(context, "Success delete.", Toast.LENGTH_SHORT).show()
+            }
+            is NotesState.DeleteError -> {
+                Toast.makeText(context, "Error occurred while deleting.", Toast.LENGTH_SHORT).show()
+            }
+            is NotesState.ArchiveSuccess -> {
+                Toast.makeText(context, "Success archive.", Toast.LENGTH_SHORT).show()
+            }
+            is NotesState.ArchiveError -> {
+                Toast.makeText(context, "Error occurred while archiving.", Toast.LENGTH_SHORT).show()
+            }
+            is NotesState.UnArchiveSuccess -> {
+                Toast.makeText(context, "Success unarchive.", Toast.LENGTH_SHORT).show()
+            }
+            is NotesState.UnArchiveError -> {
+                Toast.makeText(context, "Error occurred while unarchive.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
-
-    fun renderDeleteState(state: DeleteNoteState) {
-        when(state) {
-            is DeleteNoteState.Success -> {
-                Toast.makeText(context, "Successfully deleted note.", Toast.LENGTH_SHORT).show()
-            }
-            is DeleteNoteState.Error -> {
-                Toast.makeText(context, "Error occurred: " + state.error, Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    fun renderArchiveState(state: ArchiveNoteState) {
-        when(state) {
-            is ArchiveNoteState.Success -> {
-                Toast.makeText(context, "Successfully archived note.", Toast.LENGTH_SHORT).show()
-            }
-            is ArchiveNoteState.Error -> {
-                Toast.makeText(context, "Error occurred: " + state.error, Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
 }

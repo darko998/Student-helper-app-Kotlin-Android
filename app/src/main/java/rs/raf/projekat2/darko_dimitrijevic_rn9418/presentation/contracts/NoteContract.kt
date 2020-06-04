@@ -8,9 +8,6 @@ interface NoteContract {
 
     interface ViewModel {
         val addDone: LiveData<AddNoteState>
-        val deleteDone: LiveData<DeleteNoteState>
-        val editDone: LiveData<EditNoteState>
-        val archiveDone: LiveData<ArchiveNoteState>
         val notesState: LiveData<NotesState>
 
         fun insert(note: Note)
@@ -18,5 +15,6 @@ interface NoteContract {
         fun getByTitleOrContent(title: String, content: String, archived: Boolean)
         fun delete(note: Note)
         fun changeArchiveState(note: Note)
+        fun update(note: Note)
     }
 }

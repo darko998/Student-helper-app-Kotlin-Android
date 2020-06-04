@@ -6,7 +6,6 @@ import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.activities.L
 
 class LoggedUserData (private val sharedPreferences: SharedPreferences) {
 
-
     /**
      * This method login user and save data in shared preferences.
      *
