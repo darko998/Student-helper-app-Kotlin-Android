@@ -11,6 +11,7 @@ import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.note.Note
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.contracts.NoteContract
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.states.note.AddNoteState
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.viewmodels.NoteViewModel
+import java.util.*
 
 class CreateNoteActivity : AppCompatActivity(R.layout.activity_create_note) {
 
@@ -33,7 +34,8 @@ class CreateNoteActivity : AppCompatActivity(R.layout.activity_create_note) {
             val title = et_note_title.text.toString()
             val content = et_note_content.text.toString()
 
-            noteViewModel.insert(Note(0, title, content, false))
+            noteViewModel.insert(Note(0, title, content, false, Date().time))
+
 
             et_note_title.setText("")
             et_note_content.setText("")

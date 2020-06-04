@@ -13,4 +13,5 @@ interface NoteRepository {
     fun delete(note: Note) : Completable
     fun changeArchiveState(note: Note) : Completable
     fun update(note: Note): Completable
+    fun getNotesCountForLast5Days() : Observable<Resource<List<Int>>>
 }

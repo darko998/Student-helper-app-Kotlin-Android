@@ -6,6 +6,7 @@ import io.reactivex.Observable
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.Resource
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.note.Note
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.note.NoteEntity
+import java.util.*
 
 @Dao
 abstract class NoteDao {
@@ -24,6 +25,9 @@ abstract class NoteDao {
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     abstract fun update(note: NoteEntity) : Completable
+
+    @Query("SELECT * FROM notes WHERE created > :fromTime")
+    abstract fun getNotesInLast5Days(fromTime: Long) : Observable<List<Note>>
 
 
 

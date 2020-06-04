@@ -1,6 +1,5 @@
 package rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.viewmodels
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -20,6 +19,7 @@ class NoteViewModel (val noteRepository: NoteRepository) : ViewModel(), NoteCont
 
     override val addDone: MutableLiveData<AddNoteState> = MutableLiveData()
     override val notesState: MutableLiveData<NotesState> = MutableLiveData()
+    override val fetchedNotesCountListState: MutableLiveData<FetchedNotesCountListState> = MutableLiveData()
 
     private val subscriptions = CompositeDisposable()
 
@@ -43,8 +43,6 @@ class NoteViewModel (val noteRepository: NoteRepository) : ViewModel(), NoteCont
                 {
                     when(it) {
                         is Resource.Success -> {
-                            Timber.e("------- " + it.data)
-
                             notesState.value = NotesState.Success(it.data)
                         }
                         is Resource.Error -> notesState.value = NotesState.Error("Error occurred while filtering notes.")
@@ -83,7 +81,6 @@ class NoteViewModel (val noteRepository: NoteRepository) : ViewModel(), NoteCont
                 {
                     when(it) {
                         is Resource.Success -> {
-                            Timber.e("------- " + it.data)
                             notesState.value = NotesState.Success(it.data)
                         }
                         is Resource.Loading -> notesState.value = NotesState.Loading
@@ -158,6 +155,33 @@ class NoteViewModel (val noteRepository: NoteRepository) : ViewModel(), NoteCont
                 }
             )
         subscriptions.add(subscription)
+    }
+
+    override fun getNotesCountForLast5Days() {
+        val subscription =  noteRepository
+            .getNotesCountForLast5Days()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+
+                    when(it) {
+                        is Resource.Success -> {
+                            fetchedNotesCountListState.value = FetchedNotesCountListState.Success(it.data)
+                        }
+                        is Resource.Error -> {
+                            fetchedNotesCountListState.value = FetchedNotesCountListState.Error("Error occurred while trying to fetch notes created in last 5 days.")
+                        }
+                    }
+                },
+                {
+                    fetchedNotesCountListState.value = FetchedNotesCountListState.Error("Error occurred while trying to fetch notes created in last 5 days.")
+                    Timber.e(it)
+                }
+            )
+
+        subscriptions.add(subscription)
+
     }
 
 

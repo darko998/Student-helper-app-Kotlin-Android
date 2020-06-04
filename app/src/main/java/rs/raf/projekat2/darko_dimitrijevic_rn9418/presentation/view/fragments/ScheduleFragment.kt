@@ -72,7 +72,6 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         /** Here we listen on state changes while we fetching data from RAF API. */
         schoolClassViewModel.schoolClassesState.observe(viewLifecycleOwner, Observer {
             renderState(it)
-            Timber.e(it.toString())
         })
 
         /** Here we initiate fetching data from db. */

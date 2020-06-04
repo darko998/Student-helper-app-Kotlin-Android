@@ -9,6 +9,7 @@ interface NoteContract {
     interface ViewModel {
         val addDone: LiveData<AddNoteState>
         val notesState: LiveData<NotesState>
+        val fetchedNotesCountListState: LiveData<FetchedNotesCountListState>
 
         fun insert(note: Note)
         fun getAll(archived: Boolean)
@@ -16,5 +17,6 @@ interface NoteContract {
         fun delete(note: Note)
         fun changeArchiveState(note: Note)
         fun update(note: Note)
+        fun getNotesCountForLast5Days()
     }
 }

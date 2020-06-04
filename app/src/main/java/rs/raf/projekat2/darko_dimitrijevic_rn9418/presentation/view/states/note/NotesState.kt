@@ -15,5 +15,4 @@ sealed class NotesState {
     object ArchiveError : NotesState()
     object UnArchiveSuccess : NotesState()
     object UnArchiveError : NotesState()
-
 }

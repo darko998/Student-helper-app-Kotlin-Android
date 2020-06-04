@@ -20,6 +20,7 @@ class EditNoteActivity : AppCompatActivity(R.layout.activity_edit_note) {
         const val NOTE_TITLE = "note_title"
         const val NOTE_CONTENT = "note_content"
         const val NOTE_ARCHIVED = "note_archived"
+        const val NOTE_CREATED = "note_created"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,9 +40,10 @@ class EditNoteActivity : AppCompatActivity(R.layout.activity_edit_note) {
         val title = intent.getStringExtra(NOTE_TITLE)
         val content = intent.getStringExtra(NOTE_CONTENT)
         val archived = intent.getBooleanExtra(NOTE_ARCHIVED, false)
+        val created = intent.getLongExtra(NOTE_CREATED, -1)
 
         /** Save note we get from notesFragment in object note. */
-        note = Note(id, title, content, archived)
+        note = Note(id, title, content, archived, created)
 
         /** Initializing edit texts on view with data we get from intent. */
         et_note_title_edit.setText(title.toString())
@@ -55,7 +57,7 @@ class EditNoteActivity : AppCompatActivity(R.layout.activity_edit_note) {
             val title = et_note_title_edit.text.toString()
             val content = et_note_content_edit.text.toString()
 
-            val tmpNote = Note(note.id, title, content, note.archived)
+            val tmpNote = Note(note.id, title, content, note.archived, note.created)
             noteViewModel.update(tmpNote)
             finish()
         }

@@ -79,11 +79,11 @@ class NotesFragment : Fragment(R.layout.fragment_notes) {
                 intent.putExtra(EditNoteActivity.NOTE_TITLE, note.title)
                 intent.putExtra(EditNoteActivity.NOTE_CONTENT, note.content)
                 intent.putExtra(EditNoteActivity.NOTE_ARCHIVED, note.archived)
+                intent.putExtra(EditNoteActivity.NOTE_CREATED, note.created)
                 startActivity(intent)
 
             } else if (flag == 2) {
                 /** If flag is 2 that means icon ARCHIVE is clicked. */
-                Timber.e(note.archived.toString())
 
                 noteViewModel.changeArchiveState(note)
             }
@@ -123,12 +123,10 @@ class NotesFragment : Fragment(R.layout.fragment_notes) {
 
         /** Here we listen on notes changes. */
         noteViewModel.notesState.observe(viewLifecycleOwner, Observer {
-            Timber.e("darkoooooooooooooooooooooooooo " + it)
             renderState(it)
         })
 
         val archived = switchBtn.isChecked
-        Timber.e(archived.toString())
 
         /** Here we initiate fetching data from db. */
         noteViewModel.getByTitleOrContent("", "", archived)
