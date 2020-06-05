@@ -1,5 +1,6 @@
 package rs.raf.projekat2.darko_dimitrijevic_rn9418.presentation.view.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -41,6 +42,10 @@ class LoginActivity : AppCompatActivity(R.layout.activity_login) {
                         pin
                     )
                 )
+
+                val intent = Intent(this , MainActivity::class.java)
+                startActivity(intent)
+                finish()
             }
         }
     }

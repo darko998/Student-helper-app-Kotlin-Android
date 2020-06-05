@@ -3,11 +3,9 @@ package rs.raf.projekat2.darko_dimitrijevic_rn9418.data.repositories.note
 import io.reactivex.Completable
 import io.reactivex.Observable
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.datasources.local.database.note.NoteDao
-import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.DateRange
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.Resource
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.note.Note
 import rs.raf.projekat2.darko_dimitrijevic_rn9418.data.models.note.NoteEntity
-import timber.log.Timber
 import java.util.*
 
 class NoteRepositoryImpl (val dataSource: NoteDao) : NoteRepository {
